@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pl-PL">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Intel 8086</title>
+    </head>
+    <body>
+        <style>
+            #container{
+                background-color: rgb(144, 218, 34);
+                padding: 2%;
+                width: 50%;
+            }
+
+            h1{
+                margin-top: 0;
+                text-align: center;
+            }
+
+            h2{
+                margin-bottom: 2%;
+            }
+
+            h3{
+                margin-bottom: 0px;
+                margin-top: 0px;
+            }
+
+            #registers{
+                float: left;
+                margin-left: 15%;
+                margin-top: 5%;
+            }
+
+            #operations{
+                padding-left: 40%;
+                margin-top: 5%;
+            }
+
+            #from{
+                float: left;
+                margin-top: 1%;
+                margin-left: 40%;
+                margin-right: 5%;
+            }
+
+            #to{
+                margin-top: 1%;
+            }
+
+            input{
+                margin-left: 5px;
+            }
+        </style>
+        <div id="container">
+            <h1>Symulator procesora INTEL 8086</h1><hr>
+            <div id="registers">
+                <label for="AX">AX</label>
+                <input
+                    type="text"
+                    id="AX"
+                    name="AX"
+                    placeholder="0000"
+                    style="text-align: center"
+                    size = "6"
+                    maxlength = "4"
+                /><br><br>
+                <label for="BX">BX</label>
+                <input
+                    type="text"
+                    id="BX"
+                    name="BX"
+                    placeholder="0000"
+                    style="text-align: center"
+                    size = "6"
+                    maxlength = "4"
+                /><br><br>
+                <label for="CX">CX</label>
+                <input
+                    type="text"
+                    id="CX"
+                    name="CX"
+                    placeholder="0000"
+                    style="text-align: center"
+                    size = "6"
+                    maxlength = "4"
+                /><br><br>
+                <label for="DX">DX</label>
+                <input
+                    type="text"
+                    id="DX"
+                    name="DX"
+                    placeholder="0000"
+                    style="text-align: center"
+                    size = "6";
+                    maxlength = "4";
+                /><br>
+            </div>
+            <div id="operations">
+                <h3><b>Losowanie liczb w systemie szesnastkowym:</b>
+                <button
+                    class="btn btn-primary"
+                    type="button"
+                    onclick="generateRandomHEX()"
+                >Random</button></h3><br>
+                <h3><b>Wyzerowanie rejestrów:</b>
+                <button 
+                    class="btn btn-primary" 
+                    type="button" 
+                    onclick="reset()"
+                >Reset</button></h3>
+                <h2>Operacje</h2>
+                <button class="btn btn-primary" type="button" onclick="MOV()"
+                >MOV</button >
+                <button class="btn btn-primary" type="button" onclick="XCHG()"
+                >XCHG</button><br><br>
+            </div>
+            <div id="from">
+                <h3>Rejestr początkowy:</h3>
+                <input type="radio" name="from" value="AX" id="checkAX" />
+                <label for="checkAX">AX</label><br>
+
+                <input type="radio" name="from" value="BX" id="checkBX" />
+                <label for="checkBX">BX</label><br>
+
+                <input type="radio" name="from" value="CX" id="checkCX" />
+                <label for="checkCX">CX</label><br>
+
+                <input type="radio" name="from" value="DX" id="checkDX" />
+                <label for="checkDX">DX</label><br>
+            </div>
+            <div id="to">
+                <h3>Rejestr docelowy:</h3>
+                <input type="radio" name="to" value="AX" id="checkAH" />
+                <label for="checkAH">AX</label><br>
+
+                <input type="radio" name="to" value="BX" id="checkBX" />
+                <label for="checkBX">BX</label><br>
+
+                <input type="radio" name="to" value="CX" id="checkCX" />
+                <label for="checkCX">CX</label><br>
+
+                <input type="radio" name="to" value="DX" id="checkDX" />
+                <label for="checkDX">DX</label><br>
+            </div>
+        </div>
+        <script>
+            function MOV() {
+                let [from, to] = getSelectedRadioBox();
+                document.getElementById(to).value = document.getElementById(from).value;
+            }
+
+            function XCHG() {
+                let [from, to] = getSelectedRadioBox();
+                [
+                    document.getElementById(from).value,
+                    document.getElementById(to).value,
+                ] = [
+                    document.getElementById(to).value,
+                    document.getElementById(from).value,
+                ];
+            }
+
+            function generateRandomHEX() {
+                document.getElementById("AX").value = randHex(4).toUpperCase();
+                document.getElementById("BX").value = randHex(4).toUpperCase();
+                document.getElementById("CX").value = randHex(4).toUpperCase();
+                document.getElementById("DX").value = randHex(4).toUpperCase();
+            }
+
+            function reset() {
+                document.getElementById("AX").value = null;
+                document.getElementById("BX").value = null;
+                document.getElementById("CX").value = null;
+                document.getElementById("DX").value = null;
+            }
+
+            let randHex = function (len) {
+                var maxlen = 8,
+                    min = Math.pow(16, Math.min(len, maxlen) - 1);
+                (max = Math.pow(16, Math.min(len, maxlen)) - 1),
+                    (n = Math.floor(Math.random() * (max - min + 1)) + min),
+                    (r = n.toString(16));
+                while (r.length < len) {
+                    r = r + randHex(len - maxlen);
+                }
+                return r;
+            };
+
+            let getSelectedRadioBox = () => {
+                let selectedFrom = document.querySelector(
+                    'input[name="from"]:checked'
+                ).value;
+                let selectedTo = document.querySelector(
+                    'input[name="to"]:checked'
+                ).value;
+                if (selectedTo === selectedFrom) {
+                    alert("Wybierz dwa różne rejestry...");
+                    return [];
+                }
+
+                return [selectedFrom, selectedTo];
+            };
+        </script>
+    </body>
+</html>
